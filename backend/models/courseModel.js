@@ -27,7 +27,7 @@ const chapterSchema = new mongoose.Schema(
 );
 
 // Lecture Schema
-const lecturesSchema = new mongoose.Schema(
+const lectureSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     duration: {

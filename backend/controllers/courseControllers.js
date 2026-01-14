@@ -109,7 +109,7 @@ export const getPublicCourses = async (req, res) => {
     if (home === true) {
       filter.courseType = "top";
     } else if (type === "top") {
-      filter.courseType === "top";
+      filter.courseType = "top";
     } else if (type === "regular") {
       filter.courseType = "regular";
     }
@@ -401,11 +401,54 @@ export const rateCourse = async (req, res) => {
       myRating: { userId, rating },
     });
   } catch (err) {
-     console.error("rateCourse error:", err);
+    console.error("rateCourse error:", err);
     // if a mongoose validation error includes path ratings.0.userId you can surface it
     if (err && err.name === "ValidationError") {
-      return res.status(400).json({ success: false, message: err.message });
+      return res
+        .status(400)
+        .json({ success: false, message: err.message });
     }
-    return res.status(500).json({ success: false, message: "Server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error" });
+  }
+};
+
+// Get MyRating
+export const getMyRating = async (req, res) => {
+  try {
+    const { userId } = getAuth(req) || {};
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication Required",
+      });
+    }
+
+    const { courseId } = req.params;
+    const course = await Course.findById(courseId).lean();
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Not Found",
+      });
+    }
+
+    const my =
+      (course.ratings || []).find(
+        (r) => String(r.userId) === String(userId)
+      ) || null;
+    return res.json({
+      success: true,
+      myRating: my
+        ? { rating: my.rating, comment: my.comment }
+        : null,
+    });
+  } catch (error) {
+    console.error("GetMyRating error: ", error);
+    return res.status(500).json({
+      success: false,
+      error: "Server Error",
+    });
   }
 };
