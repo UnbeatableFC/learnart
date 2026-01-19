@@ -10,7 +10,11 @@ const app = e();
 const port = process.env.PORT;
 
 // MIDDLEWARES
-app.use(cors());
+app.use(cors(
+  {
+    origin : ["http://localhost:5173" , "http://localhost:5174"]
+  }
+));
 app.use(e.json());
 app.use(e.urlencoded({ extended: true }));
 app.use(clerkMiddleware());

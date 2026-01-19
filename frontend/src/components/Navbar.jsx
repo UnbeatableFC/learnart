@@ -7,8 +7,9 @@ import {
   Menu,
   Users,
   X,
+  BookOpenText,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { href, NavLink } from "react-router-dom";
 import {
   useAuth,
   useClerk,
@@ -19,7 +20,7 @@ import {
 import { navbarStyles } from "../assets/dummyStyles";
 import logo from "../assets/logo.png";
 
-const navItems = [
+const baseNav = [
   { name: "Home", icon: Home, href: "/" },
   { name: "Courses", icon: BookOpen, href: "/courses" },
   { name: "About", icon: BookMarked, href: "/about" },
@@ -44,6 +45,17 @@ const Navbar = () => {
   const menuRef = useRef(null);
   const isLoggedIn =
     isSignedIn && Boolean(localStorage.getItem("token"));
+
+  const navItems = isSignedIn
+    ? [
+        ...baseNav,
+        {
+          name: "My Courses",
+          icon: BookOpenText,
+          href: "/mycourses",
+        },
+      ]
+    : baseNav;
 
   // Fetch Token
   useEffect(() => {
